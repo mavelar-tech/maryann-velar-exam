@@ -1,0 +1,257 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --red: #FF0000;
+    --black: #282828;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--black);
+}
+
+.logo {
+    width: 55px;
+    height: auto;
+}
+
+.hr {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-top: 1px solid lightgray;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.main_container-4::-webkit-scrollbar-track {
+    background-color: #F5F5F5;
+}
+
+.main_container::-webkit-scrollbar {
+    width: 8px;
+    background-color: #F5F5F5;
+}
+
+.main_container::-webkit-scrollbar-thumb {
+    background-color: gray;
+    border-radius: 100px;
+}
+
+
+.side_container {
+    width: 350px;
+    gap: 20px;
+    border-right: 1px solid lightgray;
+}
+
+.logo_container {
+    align-items: center;
+    padding: 10px 0px 5px 10px;
+}
+
+.logo_container span {
+    font-weight: 700;
+    font-size: 1.536rem;
+}
+
+.navigation_container .navigation,
+.navigation_container .channels {
+    margin: 10px 20px 10px 20px;
+}
+
+.navigation_container .navigation {
+    border-radius: 8px;
+    padding: 13px;
+    gap: 10px;
+    align-items: center;
+}
+
+.selected_changeBG {
+    background-color: whitesmoke;
+}
+
+.navigation_container .navigation span {
+    all: unset;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.navigation_container span {
+    margin-left: 20px;
+    font-weight: 500;
+    font-size: 16px;
+    color: gray;
+}
+
+.channels {
+    gap: 13px;
+    padding-top: 15px;
+}
+
+.channels .channel_container {
+    align-items: center;
+    gap: 10px;
+}
+
+.channels .channel_container .channel_pfp {
+    all: unset;
+    width: 40px;
+    height: 40px;
+    background-color: red;
+    border-radius: 100%;
+}
+
+.channels .channel_container .channel_name {
+    all: unset;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.main_container {
+    width: 100%;
+    gap: 20px;
+    overflow-y: auto;
+}
+
+.content_container {
+    padding: 10px 25px 5px 20px;
+    gap: 30px;
+    margin-bottom: 20px
+}
+
+.content_container .content_column {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 10px;
+}
+
+.content_container .content_column header {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.content_container .content_column header span {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.content_container .content_column header button {
+    all: unset;
+}
+
+.content_container .content_column header button i {
+    color: gray;
+    font-size: smaller;
+    margin-right: 5px;
+}
+
+.content_container .content_column header button span {
+    font-weight: 500;
+    font-size: 14px;
+    color: gray;
+}
+
+.grid-columns-4 {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 20px;
+}
+
+.videos_container .flex-column {
+    margin-bottom: 10px;
+}
+
+.videos_container div a {
+    all: unset;
+    cursor: pointer;
+}
+
+.videos_container .channel_video {
+    width: 285px;
+    height: 150px;
+    border-radius: 15px;
+    margin-bottom: 8px;
+}
+
+.videos_container .video_title {
+    max-width: 285px;
+    font-weight: 500;
+    color: --black;
+    font-size: 15px;
+    margin-bottom: 5px;
+    word-wrap: break-word;
+}
+
+.videos_container .channel_name {
+    font-weight: 400;
+    color: gray;
+    font-size: 12px;
+}
+
+.channel_info_container {
+    align-items: center;
+    gap: 20px;
+}
+
+.channel_info_container .channel_pfp {
+    all: unset;
+    min-width: 120px;
+    height: 120px;
+    background-color: red;
+    border-radius: 100%;
+}
+
+.channel_info_container .channel_name {
+    all: unset;
+    font-size: 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.channel_info_container .channel_description {
+    all: unset;
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+.pagination {
+    gap: 30px;
+    align-self: end;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.pagination-left, .pagination-right {
+    color: lightgray;
+}
+
+.pagination span {
+    font-weight: 600;
+}

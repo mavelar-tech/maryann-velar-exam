@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="./public/YTLogo.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> KPopTube </title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <div id="app" class="flex-row">
+        <section class="side_container flex-column">
+            <div class="logo_container flex-row">
+                <img src="./public/YTLogo.png" alt="logo" class="logo">
+                <span> KPopTube </span>
+            </div>
+            <div class="navigation_container">
+                <div id="to_home" class="navigation flex-row pointer selected_changeBG" @click="select_home">
+                    <i class=" ph-fill ph-house"></i>
+                    <span> Home </span>
+                </div>
+                <div class="hr"></div>
+                <span> Explore </span>
+                <div class="channels flex-column">
+                    <div id="to_channel" class="channel_container flex-row pointer" v-for="channel in channels"
+                        :key="channel.channel_id" @click="select_channel(channel.channel_id)">
+                        <img class=" channel_pfp" :src="channel.channel_pfp" alt="Channel's Profile Picture" />
+                        <span class="channel_name"> {{ channel.channel_name }} </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="main_container flex-column">
+            <div class="content_container flex-column" v-if="selected_channel === null">
+                <div class="grid-columns-4 videos_container">
+                    <div class="flex-column" v-for="video in sorted_videos" :key="video.video_id">
+                        <a :href="video.video_link" target="_blank">
+                            <img class="channel_video" :src="video.video_thumbnail" alt="Video's Thumbnail" />
+                        </a>
+                        <span class="video_title"> {{ video.video_title }} </span>
+                        <span class="channel_name pointer" @click="select_channel(video.channel_id)"> {{
+                            get_channel_name(video.channel_id) }} </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content_container flex-column" v-else>
+                <div class="channel_info_container flex-row">
+                    <img class="channel_pfp" :src="channels.find(c => c.channel_id === selected_channel).channel_pfp"
+                        alt="Channel's Profile Picture" />
+                    <div class="flex-column">
+                        <span class="channel_name"> {{ channels.find(c => c.channel_id ===
+                            selected_channel).channel_name }} </span>
+                        <p class="channel_description"> {{ channels.find(c => c.channel_id ===
+                            selected_channel).channel_description }} </p>
+                    </div>
+                </div>
+
+                <div class="pagination flex-row">
+                    <div class="pagination-left pointer" @click="prev_page" :disabled="current_page === 1">
+                        <i class="ph-light ph-arrow-left"></i>
+                        <span> Previous </span>
+                    </div>
+                    <span> Page {{ current_page }} of {{ total_pages }} </span>
+                    <div class="pagination-right pointer" @click="next_page" :disabled="current_page === total_pages">
+                        <i class="ph-light ph-arrow-right"></i>
+                        <span> Next </span>
+                    </div>
+                </div>
+
+                <div class="grid-columns-4 videos_container">
+                    <div class="flex-column" v-for="video in paginated_videos" :key="video.video_id">
+                        <a :href="video.video_link" target="_blank">
+                            <img class="channel_video" :src="video.video_thumbnail" alt="Video's Thumbnail" />
+                        </a>
+                        <span class="video_title"> {{ video.video_title }} </span>
+                        <span class="channel_name"> {{ video.video_description }} </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                channels: [],
+                videos: [],
+                selected_channel: null,
+                current_page: 1,
+                videos_per_page: 20,
+            },
+            created: function () {
+                this.fetch_channel_data();
+            },
+            computed: {
+                sorted_videos() {
+                    return this.videos.slice().sort((a, b) => {
+                        return new Date(b.video_publishedAt) - new Date(a.video_publishedAt);
+                    });
+                },
+                filtered_channel_videos() {
+                    const filtered = this.videos.filter(video => video.channel_id === this.selected_channel);
+                    return filtered.sort((a, b) => {
+                        return new Date(b.video_publishedAt) - new Date(a.video_publishedAt);
+                    });
+                },
+                paginated_videos() {
+                    const start = (this.current_page - 1) * this.videos_per_page;
+                    const end = start + this.videos_per_page;
+                    return this.filtered_channel_videos.slice(start, end)
+                },
+                total_pages() {
+                    return Math.ceil(this.filtered_channel_videos.length / this.videos_per_page);
+                }
+            },
+            methods: {
+                fetch_channel_data: function () {
+                    axios.get('./youtube_channel_json.php')
+                        .then(response => {
+                            this.channels = response.data.channels;
+                            this.videos = response.data.videos;
+                        })
+                        .catch(error => {
+                            console.log('Failed fetching data:', error);
+                        });
+                },
+                select_channel: function (id) {
+                    this.selected_channel = id;
+
+                    this.current_page = 1;
+
+                    const home_button = document.getElementById('to_home');
+                    home_button.classList.remove('selected_changeBG');
+                },
+                select_home: function () {
+                    this.selected_channel = null;
+
+                    const home_button = document.getElementById('to_home');
+                    home_button.classList.add('selected_changeBG');
+                },
+                get_channel_name: function (id) {
+                    const channel = this.channels.find(c => c.channel_id === id);
+                    return channel ? channel.channel_name : '';
+                },
+                prev_page() {
+                    if (this.current_page > 1) {
+                        this.current_page--;
+                    }
+                },
+
+                next_page() {
+                    if (this.current_page < this.total_pages) {
+                        this.current_page++;
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
