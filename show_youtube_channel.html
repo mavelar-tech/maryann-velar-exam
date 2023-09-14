@@ -102,9 +102,13 @@
             },
             computed: {
                 sorted_videos() {
-                    return this.videos.slice().sort((a, b) => {
-                        return new Date(b.video_publishedAt) - new Date(a.video_publishedAt);
-                    });
+                    if (Array.isArray(this.videos)) {
+                        return this.videos.slice().sort((a, b) => {
+                            return new Date(b.video_publishedAt) - new Date(a.video_publishedAt);
+                        });
+                    } else {
+                        return [];
+                    }
                 },
                 filtered_channel_videos() {
                     const filtered = this.videos.filter(video => video.channel_id === this.selected_channel);

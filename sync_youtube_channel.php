@@ -6,6 +6,7 @@ $channel_ids = ['UC3IZKseVpdzPSBaWxBxundA', 'UCLkAepWjdylmXSltofFvsYQ', 'UCfkXDY
 
 $db = new Database();
 $connect = $db->db_connect();
+
 $insert_queries = [];
 
 foreach ($channel_ids as $channel_id) {
@@ -37,12 +38,12 @@ foreach ($channel_ids as $channel_id) {
         }
 
         $nextPageToken = '';
-        $videoCount = 0;
+        $video_count = 0;
 
         do {
-            $maxResults = min(50, $videos_needed - $videoCount);
+            $max_results = min(50, $videos_needed - $video_count);
 
-            $api_video_url = $base_url . 'search?order=date&type=video&part=snippet&channelId=' . $channel_id . '&maxResults=' . $maxResults . '&pageToken=' . $nextPageToken . '&key=' . $api_key;
+            $api_video_url = $base_url . 'search?order=date&type=video&part=snippet&channelId=' . $channel_id . '&max_results=' . $max_results . '&pageToken=' . $nextPageToken . '&key=' . $api_key;
             $video_data = json_decode(file_get_contents($api_video_url));
 
             if ($video_data) {
@@ -54,22 +55,18 @@ foreach ($channel_ids as $channel_id) {
                     $video_thumbnail = $video->snippet->thumbnails->high->url;
                     $video_publishedAt = $video->snippet->publishedAt;
 
-                    $check_sql = "SELECT video_id FROM `youtube_channel_videos` WHERE `video_id` = '$video_id'";
-                    $check_result = $connect->query($check_sql);
-
-                    if ($check_result->num_rows == 0) {
-                        $insert_sql = "INSERT IGNORE INTO `youtube_channel_videos` (`video_id`, `video_link`, `video_title`, `video_description`, `video_thumbnail`, `channel_id`, `video_publishedAt`) 
+                    $insert_sql = "INSERT IGNORE INTO `youtube_channel_videos` (`video_id`, `video_link`, `video_title`, `video_description`, `video_thumbnail`, `channel_id`, `video_publishedAt`) 
                                 VALUES ('$video_id', '$video_link', '$video_title', '$video_description', '$video_thumbnail', '$channel_id', '$video_publishedAt')";
-                        $insert_queries[] = $insert_sql;
-                        $videoCount++;
-                    }
+                    $insert_queries[] = $insert_sql;
+
+                    $video_count++;
                 }
 
                 $nextPageToken = isset($video_data->nextPageToken) ? $video_data->nextPageToken : '';
 
                 sleep(1);
             }
-        } while (!empty($nextPageToken) && $videoCount < $videos_needed);
+        } while (!empty($nextPageToken) && $video_count < $videos_needed);
     }
 }
 
@@ -86,7 +83,7 @@ class Database
         $connect = new mysqli('localhost', 'root', '', 'youtube_db');
 
         if ($connect->connect_error) {
-            die('Error fetching channel videos.');
+            die('Error connecting to database.');
         } else {
             return $connect;
         }
